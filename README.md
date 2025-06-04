@@ -1,2 +1,0 @@
-# devSync
-Coonecting with Devs 
