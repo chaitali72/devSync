@@ -2,14 +2,28 @@ const express = require("express");
  const connectDB = require("./config/database");
  const User = require("./models/user")
 const app = express();
+const bcrypt = require("bcrypt");
 const PORT = 3000;
-
+const {validateSignupData} = require("./utils/validation")
 app.use(express.json());
 
  app.post("/signup", async(req,res) => {
+validateSignupData(req); // validate the data before creating a user
+console.log("Request body:", req.body);
+const { firstName, lastName, emailId, password, age, photoUrl, skills } = req.body;
+const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
   console.log(req.body) // doing this sending JSOn server is nbot able to read JSON data so we need middleware
-const user = new User(req.body);
+  const user = new User({
+    firstName,
+    lastName,
+    emailId,
+    password: hashedPassword, // Store the hashed password
+    age,
+    photoUrl,
+    skills
+});
+
 
 try {
   await user.save();

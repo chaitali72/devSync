@@ -26,3 +26,7 @@ add validation to skills
 task - add api level validation on patch request and sign up post api
 data sanitising - add api validation for each field
 for validation we are using - npm validator - you can add db level validaton or api level validation
+npm validator library functions and use lubrary use for emaila nd password   
+never trust req.body
+add authentication 
+to encrypt the password - use npm bcrypt library 
