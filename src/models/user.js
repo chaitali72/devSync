@@ -1,19 +1,63 @@
 const mongoose = require("mongoose");
+const validator = require('validator'); // schema levelvalidation
 
 const userSchema = new mongoose.Schema({
 
     firstName:{
-        type: String
+        type: String,
+        minlength: 2,
+        maxlength: 50,
+        required: true,
     },
     lastName: {
-            type: String
+            type: String,
+            minlength: 2,
+            maxlength: 50,
+            required: true,
         },
         emailId: {
-            type: String
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            validate(value) {
+                if (!validator.isEmail(value)) {
+                    throw new Error("Invalid email format" + value);
+                }
+            }
         },
         password: {
-            type: String
+            type: String,
+            required: true,
+        },
+        age: {
+            type: Number,
+            min:18,
+            required: true,
+        },
+        photoUrl: {
+          type:String,
+            required: true,
+            default: "https://example.com/default-profile.png",
+            validate(value) {
+                if (!validator.isURL(value)) {
+                    throw new Error("Invalid URL format" + value);
+                }
+            }
+        },
+        skills: {
+            type: [String]
+        },
+        gender:{
+            type: String,
+            validate(value){
+                if(!["male", "female", "other"].includes(value)){
+                    throw new Error("invalid gender type")
+                }
+            }
         }
+
     }
 )
 const User = mongoose.model("User", userSchema);

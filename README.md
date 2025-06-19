@@ -9,4 +9,20 @@ send json data to server , server should read the data and it should be added in
 diff between JS object vs JSON (research)
 add the express.josn() middleware to your app
  make your signup api dynacally receive the data from the end user or postman (whoever is hitting your api)
- 
+
+  create the GET api - GET  FEEd API // get all the users from the database 
+
+
+diff between find() vs findOne()
+findOne() - only return one object 
+find() - simply returns same data contain array 
+
+create an api - findbyId()  - get user find by id 
+CRUP opration
+data snitization and validation you hav eto sanitize the data before you passing into it 
+19/6
+validate apis
+add validation to skills
+task - add api level validation on patch request and sign up post api
+data sanitising - add api validation for each field
+for validation we are using - npm validator - you can add db level validaton or api level validation
