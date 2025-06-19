@@ -35,6 +35,31 @@ catch(err) {
   res.status(500).send("Internal Server Error");
 }
 });
+
+
+//login api
+app.post("/login", async(req,res) => {
+  try{
+  const { emailId, password } = req.body;
+
+  const user = await User.findOne({emailId: emailId });
+  if(!user) {
+    return res.status(400).send("Invalid Credentials");
+  } 
+   const ispasswordValid  = await bcrypt.compare(password, user.password);
+  if(ispasswordValid) {
+    console.log("User logged in successfully");
+    res.send("User logged in successfully");
+   
+  }
+  else{
+    throw new Error("Invalid Credentials");
+  }
+  } 
+  catch(err){
+    return res.status(400).send("ERROR:" + err.message);
+  }
+})
  // find user by email 
  app.get("/user", async(req,res) => {
   const email = req.body.emailId;
