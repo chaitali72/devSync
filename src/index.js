@@ -6,7 +6,9 @@ const bcrypt = require("bcrypt");
 const PORT = 3000;
 const {validateSignupData} = require("./utils/validation")
 app.use(express.json());
-
+const jwt = require("jsonwebtoken");
+const cookieparser = require("cookie-parser");
+app.use(cookieparser());
  app.post("/signup", async(req,res) => {
 validateSignupData(req); // validate the data before creating a user
 console.log("Request body:", req.body);
@@ -48,6 +50,12 @@ app.post("/login", async(req,res) => {
   } 
    const ispasswordValid  = await bcrypt.compare(password, user.password);
   if(ispasswordValid) {
+const token = await jwt.sign({_id: user._id} , "Devsnest$790")
+console.log("JWT Token:", token);
+    res.cookie("token", token)
+
+//create  JWT token using jwt
+
     console.log("User logged in successfully");
     res.send("User logged in successfully");
    
@@ -59,7 +67,41 @@ app.post("/login", async(req,res) => {
   catch(err){
     return res.status(400).send("ERROR:" + err.message);
   }
-})
+
+  // authenticate the user with JWT token
+  // add token to cookie 
+    
+});
+
+app.get("/profile", async(req,res) => {
+  try{
+ const cookies = req.cookies;
+const {token} = cookies; // Extract the token from cookies
+if (!token) {
+    return res.status(401).send("Unauthorized: No token provided");
+  }
+  const decoded = jwt.verify(token, "Devsnest$790"); // Verify the token
+  const {_id} = decoded; // Extract user ID from the decoded token
+
+  // console.log("Cookies:", cookies);
+  // res.send("reading cookie")
+   const user = await User.findById(_id); // Assuming req.user is set by a middleware
+  if (!user) {
+    throw new Error("User not found");
+  } 
+  res.send(user);
+}
+catch(err) {
+    console.error("Error fetching user profile:", err);
+    res.status(500).send("Internal Server Error");
+  }
+  // Assuming you have a middleware to authenticate the user and set req.user
+ 
+   // Get userId from query parameters
+}
+
+  // res.send(user);
+)
  // find user by email 
  app.get("/user", async(req,res) => {
   const email = req.body.emailId;
