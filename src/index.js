@@ -1,6 +1,7 @@
 const express = require("express");
  const connectDB = require("./config/database");
- const User = require("./models/user")
+ const User = require("./models/user");
+ const {userAuth} = require("./middlewares/auth");
 const app = express();
 const bcrypt = require("bcrypt");
 const PORT = 3000;
@@ -9,6 +10,7 @@ app.use(express.json());
 const jwt = require("jsonwebtoken");
 const cookieparser = require("cookie-parser");
 app.use(cookieparser());
+
  app.post("/signup", async(req,res) => {
 validateSignupData(req); // validate the data before creating a user
 console.log("Request body:", req.body);
@@ -49,16 +51,22 @@ app.post("/login", async(req,res) => {
     return res.status(400).send("Invalid Credentials");
   } 
    const ispasswordValid  = await bcrypt.compare(password, user.password);
+
   if(ispasswordValid) {
-const token = await jwt.sign({_id: user._id} , "Devsnest$790")
+const token = await jwt.sign({_id: user._id} , "Devsnest$790",{
+expiresIn: "1h"
+} ); // Create a JWT token with 1 hour expiration
 console.log("JWT Token:", token);
-    res.cookie("token", token)
+
+
+    res.cookie("token", token , {
+      expires: new Date(Date.now() + 3600000), // 1 hour expiration
+    })
 
 //create  JWT token using jwt
 
     console.log("User logged in successfully");
-    res.send("User logged in successfully");
-   
+    res.send("User logged in successfully");  
   }
   else{
     throw new Error("Invalid Credentials");
@@ -73,25 +81,11 @@ console.log("JWT Token:", token);
     
 });
 
-app.get("/profile", async(req,res) => {
+app.get("/profile",userAuth, async(req,res) => {
   try{
- const cookies = req.cookies;
-const {token} = cookies; // Extract the token from cookies
-if (!token) {
-    return res.status(401).send("Unauthorized: No token provided");
-  }
-  const decoded = jwt.verify(token, "Devsnest$790"); // Verify the token
-  const {_id} = decoded; // Extract user ID from the decoded token
-
-  // console.log("Cookies:", cookies);
-  // res.send("reading cookie")
-   const user = await User.findById(_id); // Assuming req.user is set by a middleware
-  if (!user) {
-    throw new Error("User not found");
-  } 
-  res.send(user);
-}
-catch(err) {
+    const user  = req.user;
+    res.send(user);
+  } catch(err) {
     console.error("Error fetching user profile:", err);
     res.status(500).send("Internal Server Error");
   }
