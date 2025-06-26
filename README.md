@@ -54,10 +54,15 @@ set the expiry of JWT and cookies to 7 days
    POST /profile
    PATCH /profile - update profile
    DELETE /profile 
-    POST /send request  - STATUS CAN BE IGNORE INTERESTED 
+    POST /send request  - STATUS CAN BE IGNORE /  INTERESTED 
     POST /reviewrequest - accept or reject
     GET /requests
     GET /connections
 
-     schema methods in mongoose
+     - schema methods in mongoose // moogose schema methods
+
      
+     - Explore the $nin, $and and $ne quesry paramaters
+     - pagination
+-explore skip() and limit() function 
+

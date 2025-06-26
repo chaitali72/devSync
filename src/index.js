@@ -1,101 +1,22 @@
 const express = require("express");
  const connectDB = require("./config/database");
  const User = require("./models/user");
- const {userAuth} = require("./middlewares/auth");
+
 const app = express();
-const bcrypt = require("bcrypt");
 const PORT = 3000;
-const {validateSignupData} = require("./utils/validation")
 app.use(express.json());
-const jwt = require("jsonwebtoken");
 const cookieparser = require("cookie-parser");
 app.use(cookieparser());
 
- app.post("/signup", async(req,res) => {
-validateSignupData(req); // validate the data before creating a user
-console.log("Request body:", req.body);
-const { firstName, lastName, emailId, password, age, photoUrl, skills } = req.body;
-const hashedPassword = await bcrypt.hash(req.body.password, 10);
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestRouter = require("./routes/requests");
+const userRouter = require("./routes/user");
 
-  console.log(req.body) // doing this sending JSOn server is nbot able to read JSON data so we need middleware
-  const user = new User({
-    firstName,
-    lastName,
-    emailId,
-    password: hashedPassword, // Store the hashed password
-    age,
-    photoUrl,
-    skills
-});
-
-
-try {
-  await user.save();
-  console.log("User created successfully:", user);
-  res.send("User Created Successfully");
-}
-catch(err) {
-  console.error("Error creating user:", err);
-  res.status(500).send("Internal Server Error");
-}
-});
-
-
-//login api
-app.post("/login", async(req,res) => {
-  try{
-  const { emailId, password } = req.body;
-
-  const user = await User.findOne({emailId: emailId });
-  if(!user) {
-    return res.status(400).send("Invalid Credentials");
-  } 
-   const ispasswordValid  = await bcrypt.compare(password, user.password);
-
-  if(ispasswordValid) {
-const token = await jwt.sign({_id: user._id} , "Devsnest$790",{
-expiresIn: "1h"
-} ); // Create a JWT token with 1 hour expiration
-console.log("JWT Token:", token);
-
-
-    res.cookie("token", token , {
-      expires: new Date(Date.now() + 3600000), // 1 hour expiration
-    })
-
-//create  JWT token using jwt
-
-    console.log("User logged in successfully");
-    res.send("User logged in successfully");  
-  }
-  else{
-    throw new Error("Invalid Credentials");
-  }
-  } 
-  catch(err){
-    return res.status(400).send("ERROR:" + err.message);
-  }
-
-  // authenticate the user with JWT token
-  // add token to cookie 
-    
-});
-
-app.get("/profile",userAuth, async(req,res) => {
-  try{
-    const user  = req.user;
-    res.send(user);
-  } catch(err) {
-    console.error("Error fetching user profile:", err);
-    res.status(500).send("Internal Server Error");
-  }
-  // Assuming you have a middleware to authenticate the user and set req.user
- 
-   // Get userId from query parameters
-}
-
-  // res.send(user);
-)
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRouter)
  // find user by email 
  app.get("/user", async(req,res) => {
   const email = req.body.emailId;
