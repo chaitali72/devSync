@@ -58,7 +58,7 @@ try{
 
 //user/feed
 
-userRouter.get("/user/feed", userAuth, async (req, res) => {
+userRouter.get("/feed", userAuth, async (req, res) => {
   try {
     //user should not see his own card
     //see all the users except the users who are already connected 
@@ -89,16 +89,16 @@ const page = parseInt(req.query.page) || 1;
     //$nin -  not in array
 const users = await User.find({
       $and: [
-        { _id: { $nin: Array.from(hideUsersFromFeed) } },
+        { _id: { $nin: Array.from(hideUsersFromFeed) } },  
         { _id: { $ne: loggedInUser._id } },
       ],
     })
       .select(SENDER_DATA)
       .skip(skip)
       .limit(limit);
-res.json({
-  data:users
-})
+      res.json({
+       data:users
+       })
   }
   catch (err) {
     res.status(400).send("ERROR: " + err.message);
@@ -107,3 +107,4 @@ res.json({
 });
 
  module.exports = userRouter;
+ 

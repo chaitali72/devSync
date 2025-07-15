@@ -1,9 +1,13 @@
 const express = require("express");
  const connectDB = require("./config/database");
  const User = require("./models/user");
-
+const cors = require("cors");
 const app = express();
 const PORT = 3000;
+app.use(cors({
+  origin: "http://localhost:5173", 
+  credentials: true
+}));
 app.use(express.json());
 const cookieparser = require("cookie-parser");
 app.use(cookieparser());
@@ -64,7 +68,7 @@ app.patch("/user/:userId", async (req,res) => {
 const data = req.body;
 
 try {
-    const allowedUpdates = ["skills" , "age", "gender", "photoUrl"];
+    const allowedUpdates = ["skills" , "age", "gender", "photoUrl", "lastName"];
   const isupdateAllowed = Object.keys(data).every((key) => 
     allowedUpdates.includes(key))
 
@@ -75,7 +79,7 @@ try {
   if(data.skills.length > 10 ){
     throw new Error("Skills cannot exceed 10 characters");
   }
-  console.log("Data to update:", data);
+  // console.log("Data to update:", data);
   // console.log("User ID:", userId);
  const user = await User.findByIdAndUpdate({_id: userId}, data , {
   new: true, // Returns the updated document
