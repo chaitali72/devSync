@@ -8,7 +8,7 @@ const { validateSignupData } = require("../utils/validation");
  authRouter.post("/signup", async(req,res) => {
 validateSignupData(req); // validate the data before creating a user
 console.log("Request body:", req.body);
-const { firstName, lastName, emailId, password, age, photoUrl, skills } = req.body;
+const { firstName, lastName, emailId, password,gender, age, photoUrl, skills } = req.body;
 const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
   console.log(req.body) // doing this sending JSOn server is nbot able to read JSON data so we need middleware
@@ -18,15 +18,17 @@ const hashedPassword = await bcrypt.hash(req.body.password, 10);
     emailId,
     password: hashedPassword, // Store the hashed password
     age,
-    photoUrl,
-    skills
+    gender,
 });
 
 
 try {
   await user.save();
   console.log("User created successfully:", user);
-  res.send("User Created Successfully");
+  res.status(201).send({
+    message: "User created Successfully",
+    data: user
+  })
 }
 catch(err) {
   console.error("Error creating user:", err);

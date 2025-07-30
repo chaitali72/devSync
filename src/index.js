@@ -117,9 +117,18 @@ try {
   console.error("Error fetching users:", err);
   res.status(400).send("Internal Server Error");
 }
-
- 
 });
+
+connectDB()
+.then(() => {
+    console.log("Connected to MongoDB successfully");
+    app.listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
+}
+);
+}).catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+})
 
   // how to use a middleware 
 //   const user =  new User({
@@ -143,16 +152,7 @@ try {
 
   
 
-connectDB()
-.then(() => {
-    console.log("Connected to MongoDB successfully");
-    app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-}
-);
-}).catch((err) => {
-    console.error("Error connecting to MongoDB:", err);
-})
+
 
 
 

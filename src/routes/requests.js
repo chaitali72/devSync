@@ -13,8 +13,8 @@ requestRouter.post("/request/send/:status/:toUserId",
         const fromUserId = req.user._id; // fromUserId is the user who is receiving the request    
         const status = req.params.status;
 
-const allowedStatus = ["ignored", "interested"]
-if (!allowedStatus.includes(status)) {
+       const allowedStatus = ["ignored", "interested"]
+       if (!allowedStatus.includes(status)) {
             return res.status(400).json({
                 message: "Invalid status type." + status
             });

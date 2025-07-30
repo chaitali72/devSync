@@ -5,7 +5,8 @@ const User = require("../models/user");
 const {userAuth} = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 
-const SENDER_DATA = ["firstName", "lastName", "photoUrl", "emailId", "about", "age", "skills"];
+const SENDER_DATA = "firstName lastName photoUrl emailId about age skills";
+
 //get all the pending connection requests
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
   try {
@@ -13,7 +14,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
 
     const connectionRequests = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
-      status: "interested",
+      // status: "interested",
     }).populate("fromUserId",SENDER_DATA);
 
 //    console.log("Logged In User:", loggedInUser);
@@ -37,8 +38,10 @@ try{
         { toUserId: loggedInUser._id, status: "accepted" },
         { fromUserId: loggedInUser._id, status: "accepted" },
       ],
-    }).populate("fromUserId", SENDER_DATA)
-      .populate("toUserId", SENDER_DATA)
+    })
+    .populate("fromUserId", SENDER_DATA)
+    .populate("toUserId", SENDER_DATA)
+
 
       const data = connectionRequest.map((row) => {
         if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
@@ -46,10 +49,13 @@ try{
       }
       return row.fromUserId;
       })
-    res.json({
-        message: "Connections fetched successfully",
-        data,
-    })
+     console.log("Populated connections:", data);
+
+      res.json({ data });
+    // res.json({
+    //     message: "Connections fetched successfully",
+    //     data,
+    // })
 
 } catch(err){
     res.status(400).send("Error "+ err.message);

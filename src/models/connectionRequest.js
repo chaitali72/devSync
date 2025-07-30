@@ -9,6 +9,7 @@ ref: "User", // Reference to the User model
 toUserId: {
     type: mongoose.Schema.Types.ObjectId,
  required: true,
+ref: "User", // Reference to the User model
 },
 status: {
     type:String,

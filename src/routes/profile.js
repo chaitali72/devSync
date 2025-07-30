@@ -5,21 +5,6 @@ const bcrypt = require("bcrypt");
 const {validateEditProfileData} = require("../utils/validation");
 const User = require("../models/user");
 
-profileRouter.get("/profile/view",userAuth, async(req,res) => {
-  try{
-    const user  = req.user;
-    res.send(user);
-  } catch(err) {
-    console.error("Error fetching user profile:", err);
-    res.status(500).send("Internal Server Error");
-  }
-  // Assuming you have a middleware to authenticate the user and set req.user
- 
-   // Get userId from query parameters
-}
-
-  // res.send(user);
-)
 profileRouter.patch("/profile/edit", userAuth, async(req,res) => {
 
   try{
@@ -47,6 +32,23 @@ res.json({
 
   // res.send(user);
 )
+
+profileRouter.get("/profile/view",userAuth, async(req,res) => {
+  try{
+    const user  = req.user;
+    res.send(user);
+  } catch(err) {
+    console.error("Error fetching user profile:", err);
+    res.status(500).send("Internal Server Error");
+  }
+  // Assuming you have a middleware to authenticate the user and set req.user
+ 
+   // Get userId from query parameters
+}
+
+  // res.send(user);
+)
+
 
 
 
