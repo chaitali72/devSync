@@ -59,14 +59,17 @@ console.log("JWT Token:", token);
 //create  JWT token using jwt
 
     console.log("User logged in successfully");
-    res.send(user);  
+ res.status(200).send({
+  message: "User Logged in Successfully",
+  data: user
+ }) 
   }
   else{
     throw new Error("Invalid Credentials");
   }
   } 
   catch(err){
-    return res.status(400).send("ERROR:" + err.message);
+    return res.status(400).json({ message: err.message || "Something went wrong" });
   }
 
   // authenticate the user with JWT token

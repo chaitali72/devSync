@@ -62,7 +62,7 @@ const userSchema = new mongoose.Schema({
         photoUrl: {
           type:String,
             required: true,
-            default: "https://example.com/default-profile.png",
+            default: "https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar.png",
             validate(value) {
                 if (!validator.isURL(value)) {
                     throw new Error("Invalid URL format" + value);

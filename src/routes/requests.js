@@ -31,9 +31,11 @@ requestRouter.post("/request/send/:status/:toUserId",
     }]
  })
 if (existingConnectionRequest) {
-        return res
-          .status(400)
-          .send({ message: "Connection Request Already Exists!!" });
+      return res.status(200).json({
+        message: "connection request already exists between users",
+        alreadyExists: true,
+       existingConnectionRequest
+      })
       }
 
          const connectionRequest = new ConnectionRequest({
@@ -43,9 +45,10 @@ if (existingConnectionRequest) {
          });
 
           const data = await connectionRequest.save();
-          res.json({
-            message: req.user.firstName + " is " + status + " in " + toUser.firstName,
-            data
+          return res.json({
+            message: `${req.user.firstName} is ${status} in ${toUser.firstName}`,
+            data,
+            alreadyExists: false,
           })
         }
      catch(err) {
